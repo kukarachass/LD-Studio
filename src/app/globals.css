@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Базова тема проєкту (Tailwind v4, CSS-first конфіг).
+   Токени навмисно нейтральні: фінальну палітру обираємо на /design,
+   після чого вона переїде сюди й стане єдиним джерелом правди.
+------------------------------------------------------------------- */
+
+@theme {
+  --font-display: var(--font-unbounded), "Arial Black", sans-serif;
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-alt: var(--font-onest), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  --color-ink-950: #050608;
+  --color-ink-900: #0a0c10;
+  --color-ink-800: #12151b;
+  --color-ink-700: #1b1f27;
+  --color-ink-500: #6b7382;
+  --color-ink-300: #a8b0bd;
+  --color-ink-100: #eef2f8;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--color-ink-950);
+  color: var(--color-ink-100);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Прибираємо анімації для користувачів із prefers-reduced-motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::selection {
+  background: color-mix(in oklab, currentColor 24%, transparent);
+}
+
+/* Тонкий скролбар у темній темі */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-700) transparent;
+}
