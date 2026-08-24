@@ -10,14 +10,14 @@ export function DesignLab() {
   const active = DESIGN_VARIANTS.find((v) => v.id === activeId) ?? DESIGN_VARIANTS[0];
 
   return (
-    <div className="min-h-dvh bg-ink-950">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-ink-950/85 backdrop-blur-xl">
+    <div className="min-h-dvh bg-void">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-void/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[100rem] flex-col gap-4 px-4 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-baseline gap-3">
-            <span className="font-display text-sm font-semibold tracking-[-0.02em] text-ink-100">
+            <span className="font-display text-sm font-semibold tracking-[-0.02em] text-paper">
               L.D_Studio
             </span>
-            <span className="font-mono text-[10px] tracking-[0.24em] text-ink-500 uppercase">
+            <span className="font-mono text-[10px] tracking-[0.24em] text-faint uppercase">
               вибір дизайн-напряму
             </span>
           </div>
@@ -36,8 +36,8 @@ export function DesignLab() {
                   aria-pressed={isActive}
                   className={`relative shrink-0 rounded-full border px-4 py-2 text-[13px] whitespace-nowrap transition-colors ${
                     isActive
-                      ? "border-transparent text-ink-950"
-                      : "border-white/12 text-ink-300 hover:border-white/30 hover:text-ink-100"
+                      ? "border-transparent text-void"
+                      : "border-white/12 text-muted hover:border-white/30 hover:text-paper"
                   }`}
                 >
                   {isActive && (
@@ -60,7 +60,7 @@ export function DesignLab() {
       </header>
 
       <main className="mx-auto max-w-[100rem] px-4 py-8 sm:px-8 sm:py-12">
-        <p className="mb-8 max-w-2xl text-[15px] leading-relaxed text-ink-300">
+        <p className="mb-8 max-w-2xl text-[15px] leading-relaxed text-muted">
           Чотири різні напрями для сайту студії. Це не одна верстка в різних
           кольорах — у кожного своя композиція першого екрана, своя типографічна
           ієрархія та своя логіка анімації. Оберіть один, і я розгорну повний сайт
@@ -79,8 +79,8 @@ export function DesignLab() {
         <footer className="mt-10 border-t border-white/10 pt-8 pb-16">
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <h2 className="font-display text-lg text-ink-100">Як обрати</h2>
-              <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-ink-300">
+              <h2 className="font-display text-lg text-paper">Як обрати</h2>
+              <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-muted">
                 Напишіть номер напряму — <span className="font-mono">01</span>,{" "}
                 <span className="font-mono">02</span>,{" "}
                 <span className="font-mono">03</span> або{" "}
@@ -91,7 +91,7 @@ export function DesignLab() {
                 версія.
               </p>
             </div>
-            <div className="font-mono text-[11px] tracking-[0.2em] text-ink-500 uppercase">
+            <div className="font-mono text-[11px] tracking-[0.2em] text-faint uppercase">
               /design · чернетка
             </div>
           </div>

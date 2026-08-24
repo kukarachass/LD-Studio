@@ -1,60 +1,270 @@
 @import "tailwindcss";
 
-/* ------------------------------------------------------------------
-   Базова тема проєкту (Tailwind v4, CSS-first конфіг).
-   Токени навмисно нейтральні: фінальну палітру обираємо на /design,
-   після чого вона переїде сюди й стане єдиним джерелом правди.
-------------------------------------------------------------------- */
+/* ==================================================================
+   L.D_STUDIO — тема «RGB Спектр»
+   Tailwind v4, CSS-first конфіг. Кольори взяті з реальних робіт студії:
+   пурпур, фіолет і ціан RGB-контурів на майже чорному тлі.
+   Змінюєте колір тут — він змінюється по всьому сайту.
+================================================================== */
 
 @theme {
+  /* --- Гарнітури ------------------------------------------------ */
   --font-display: var(--font-unbounded), "Arial Black", sans-serif;
   --font-sans: var(--font-manrope), system-ui, sans-serif;
-  --font-alt: var(--font-onest), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
-  --color-ink-950: #050608;
-  --color-ink-900: #0a0c10;
-  --color-ink-800: #12151b;
-  --color-ink-700: #1b1f27;
-  --color-ink-500: #6b7382;
-  --color-ink-300: #a8b0bd;
-  --color-ink-100: #eef2f8;
+  /* --- Поверхні -------------------------------------------------- */
+  --color-void: #050308;
+  --color-surface: #0d0714;
+  --color-surface-2: #150a22;
+
+  /* --- Текст ----------------------------------------------------- */
+  --color-paper: #f6f2ff;
+  --color-muted: #8a7fa6;
+  --color-faint: #5c5474;
+
+  /* --- Акценти спектра ------------------------------------------- */
+  --color-magenta: #ff2d8f;
+  --color-violet: #7c3bff;
+  --color-cyan: #00e5ff;
+
+  /* --- Службові -------------------------------------------------- */
+  --color-line: rgba(246, 242, 255, 0.12);
+  --color-line-strong: rgba(246, 242, 255, 0.24);
+
+  /* --- Тайминги анімацій ----------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+/* ==================================================================
+   База
+================================================================== */
 
 :root {
   color-scheme: dark;
+  /* Головний градієнт спектра — використовується в тексті, лініях, кнопках */
+  --spectrum: linear-gradient(
+    96deg,
+    var(--color-magenta) 0%,
+    var(--color-violet) 48%,
+    var(--color-cyan) 100%
+  );
+  /* Висота фіксованої шапки — від неї рахується відступ якорів */
+  --header-h: 4.5rem;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 5.5rem;
+  }
 }
 
 html {
+  scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background-color: var(--color-ink-950);
-  color: var(--color-ink-100);
+  background-color: var(--color-void);
+  color: var(--color-paper);
   font-family: var(--font-sans);
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Прибираємо анімації для користувачів із prefers-reduced-motion. */
+/* Якірна навігація не має ховати заголовок під шапкою */
+[id] {
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+
+::selection {
+  background: var(--color-magenta);
+  color: #fff;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 3px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-surface-2) transparent;
+}
+
+/**
+ * Якщо скрипти вимкнені, motion лишає блоки в стані `opacity: 0` назавжди.
+ * Показуємо їх примусово — контент важливіший за анімацію.
+ */
+@media (scripting: none) {
+  .js-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
-::selection {
-  background: color-mix(in oklab, currentColor 24%, transparent);
+/* ==================================================================
+   Утиліти проєкту
+================================================================== */
+
+/** Заливка тексту градієнтом спектра. */
+@utility text-spectrum {
+  background-image: var(--spectrum);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-/* Тонкий скролбар у темній темі */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-ink-700) transparent;
+/** Фон-градієнт спектра (кнопки, смуги, підкладки). */
+@utility bg-spectrum {
+  background-image: var(--spectrum);
+}
+
+/**
+ * Рамка градієнтом у 1px. Працює через дві заливки: внутрішня — колір
+ * поверхні, зовнішня — спектр. Не потребує псевдоелементів.
+ */
+@utility border-spectrum {
+  border: 1px solid transparent;
+  background-image:
+    linear-gradient(var(--color-surface), var(--color-surface)), var(--spectrum);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+/** Горизонтальна лінія-роздільник кольорами спектра. */
+@utility rule-spectrum {
+  height: 1px;
+  border: 0;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-magenta) 18%,
+    var(--color-violet) 50%,
+    var(--color-cyan) 82%,
+    transparent 100%
+  );
+  opacity: 0.55;
+}
+
+/** Ледь помітне зерно поверх темних площин — прибирає «пластиковість». */
+@utility grain {
+  position: relative;
+}
+@utility grain-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/** Стандартний внутрішній відступ секції. */
+@utility section-x {
+  padding-inline: 1.25rem;
+  @media (min-width: 640px) {
+    padding-inline: 2rem;
+  }
+  @media (min-width: 1280px) {
+    padding-inline: 3.5rem;
+  }
+}
+
+/* ==================================================================
+   Анімації, що не залежать від JS
+================================================================== */
+
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes spectrum-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, -6%, 0) scale(1.12);
+  }
+}
+
+@keyframes hue-cycle {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* --- Поява першого екрана ----------------------------------------
+   Навмисно на чистому CSS, без JS: заголовок і телефон мають бути
+   видимими навіть якщо сторінку відкрили у фоновій вкладці або
+   скрипти ще не виконались.
+------------------------------------------------------------------- */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(28%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@utility animate-rise-in {
+  animation: rise-in 0.85s var(--ease-out-expo) both;
+}
+
+@utility animate-fade-up {
+  animation: fade-up 0.8s var(--ease-out-expo) both;
+}
+
+@utility animate-zoom-in {
+  animation: zoom-in 1.4s var(--ease-out-expo) both;
 }

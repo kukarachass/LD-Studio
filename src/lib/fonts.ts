@@ -1,16 +1,17 @@
-import { JetBrains_Mono, Manrope, Onest, Unbounded } from "next/font/google";
+import { JetBrains_Mono, Manrope, Unbounded } from "next/font/google";
 
 /**
- * Усі шрифти підключені з підмножиною `cyrillic` — сайт україномовний.
- * Кожен віддає власну CSS-змінну (`--font-<гарнітура>`), а вже globals.css
- * зіставляє їх із семантичними токенами теми (`--font-display` тощо).
+ * Шрифти сайту. Усі — варіативні (один файл на всю вагу) і з підмножиною
+ * `cyrillic`, бо сайт україномовний.
+ *
+ * Кожен віддає власну CSS-змінну, а globals.css зіставляє їх із
+ * семантичними токенами теми (--font-display / --font-sans / --font-mono).
  */
 
-/** Дисплейний гротеск із характерною геометрією — заголовки, великі цифри. */
+/** Дисплейний гротеск — заголовки, великі цифри, акцентні рядки. */
 const unbounded = Unbounded({
   variable: "--font-unbounded",
   subsets: ["cyrillic", "latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
@@ -21,14 +22,7 @@ const manrope = Manrope({
   display: "swap",
 });
 
-/** Нейтральний геометричний гротеск (напрям «Оптична схема»). */
-const onest = Onest({
-  variable: "--font-onest",
-  subsets: ["cyrillic", "latin"],
-  display: "swap",
-});
-
-/** Технічний моноширинний — індекси, координати, підписи-дані. */
+/** Технічний моноширинний — індекси секцій, теги, телефон, підписи-дані. */
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains",
   subsets: ["cyrillic", "latin"],
@@ -38,6 +32,5 @@ const jetbrainsMono = JetBrains_Mono({
 export const fontVariables = [
   unbounded.variable,
   manrope.variable,
-  onest.variable,
   jetbrainsMono.variable,
 ].join(" ");
