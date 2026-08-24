@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { FAQ } from "@/content/faq";
 import { cn } from "@/lib/utils";
@@ -12,7 +13,7 @@ export function Faq() {
   return (
     <section id="faq" className="section-x mx-auto max-w-[110rem] py-20 sm:py-28">
       <SectionHeading
-        index="05"
+        index="06"
         eyebrow="Питання та відповіді"
         title="Що запитують найчастіше"
         description="Якщо вашого питання тут немає — просто зателефонуйте або напишіть в Instagram."
@@ -23,7 +24,11 @@ export function Faq() {
           const isOpen = openIndex === i;
 
           return (
-            <div key={item.question} className="border-b border-line">
+            <Reveal
+              key={item.question}
+              delay={Math.min(i, 4) * 0.06}
+              className="border-b border-line"
+            >
               <h3>
                 <button
                   type="button"
@@ -80,7 +85,7 @@ export function Faq() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </Reveal>
           );
         })}
       </div>

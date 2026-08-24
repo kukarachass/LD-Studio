@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { CompareSlider } from "@/components/ui/compare-slider";
+import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { BEFORE_AFTER } from "@/content/before-after";
 import { cn } from "@/lib/utils";
@@ -58,7 +59,7 @@ export function BeforeAfter() {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1.55fr_1fr] lg:items-center lg:gap-14">
-          <div className="overflow-hidden rounded-sm border border-line">
+          <Reveal from="scale" className="overflow-hidden rounded-sm border border-line">
             <AnimatePresence mode="wait">
               <motion.div
                 key={active.id}
@@ -76,9 +77,9 @@ export function BeforeAfter() {
                 />
               </motion.div>
             </AnimatePresence>
-          </div>
+          </Reveal>
 
-          <div>
+          <Reveal from="right" delay={0.1}>
             <div className="font-mono text-[10px] tracking-[0.24em] text-magenta uppercase">
               {active.title}
             </div>
@@ -94,7 +95,7 @@ export function BeforeAfter() {
             <p className="mt-5 font-mono text-[10px] tracking-[0.2em] text-faint uppercase">
               Керування: перетягніть · стрілки ← → · Home / End
             </p>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

@@ -7,6 +7,7 @@ import { Faq } from "@/components/sections/faq";
 import { Hero } from "@/components/sections/hero";
 import { Marquee } from "@/components/sections/marquee";
 import { Process } from "@/components/sections/process";
+import { Reviews } from "@/components/sections/reviews";
 import { Services } from "@/components/sections/services";
 import { Works } from "@/components/sections/works";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -32,6 +33,7 @@ export default function HomePage() {
         <BeforeAfter />
         <Works />
         <Process />
+        <Reviews />
         <Faq />
         <Contacts />
         <Cta />

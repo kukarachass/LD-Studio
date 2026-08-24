@@ -1,9 +1,9 @@
 /**
  * Навігація сайту.
  *
- * `href` — це id відповідної секції на головній сторінці. Додаєте нову
- * секцію — додайте сюди пункт, і він з'явиться і в шапці, і в мобільному меню,
- * і в підвалі.
+ * `href` веде на секцію головної сторінки. Шлях навмисно абсолютний
+ * (`/#services`, а не `#services`) — щоб посилання працювали і з
+ * внутрішніх сторінок, наприклад із /roboty.
  */
 
 export type NavItem = {
@@ -14,12 +14,13 @@ export type NavItem = {
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: "#services", label: "Послуги", index: "01" },
-  { href: "#before-after", label: "До / Після", index: "02" },
-  { href: "#works", label: "Роботи", index: "03" },
-  { href: "#process", label: "Як працюємо", index: "04" },
-  { href: "#faq", label: "Питання", index: "05" },
-  { href: "#contacts", label: "Контакти", index: "06" },
+  { href: "/#services", label: "Послуги", index: "01" },
+  { href: "/#before-after", label: "До / Після", index: "02" },
+  { href: "/#works", label: "Роботи", index: "03" },
+  { href: "/#process", label: "Як працюємо", index: "04" },
+  { href: "/#reviews", label: "Відгуки", index: "05" },
+  { href: "/#faq", label: "Питання", index: "06" },
+  { href: "/#contacts", label: "Контакти", index: "07" },
 ];
 
 /** Рухомий рядок під першим екраном. */

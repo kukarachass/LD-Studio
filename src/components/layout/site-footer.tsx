@@ -41,17 +41,25 @@ export function SiteFooter() {
             <h3 className="font-mono text-[10px] tracking-[0.24em] text-magenta uppercase">
               Розділи
             </h3>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-4 space-y-0.5">
               {NAV_ITEMS.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-[14px] text-muted transition-colors hover:text-paper"
+                    className="block py-2 text-[14px] text-muted transition-colors hover:text-paper"
                   >
                     {item.label}
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/roboty"
+                  className="block py-2 text-[14px] text-muted transition-colors hover:text-paper"
+                >
+                  Усі роботи
+                </Link>
+              </li>
             </ul>
           </nav>
 
@@ -60,12 +68,12 @@ export function SiteFooter() {
             <h3 className="font-mono text-[10px] tracking-[0.24em] text-violet uppercase">
               Послуги
             </h3>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-4 space-y-0.5">
               {SERVICES.map((service) => (
                 <li key={service.slug}>
                   <Link
-                    href={`#${service.slug}`}
-                    className="text-[14px] text-muted transition-colors hover:text-paper"
+                    href={`/#${service.slug}`}
+                    className="block py-2 text-[14px] text-muted transition-colors hover:text-paper"
                   >
                     {service.title}
                   </Link>
@@ -79,11 +87,11 @@ export function SiteFooter() {
             <h3 className="font-mono text-[10px] tracking-[0.24em] text-cyan uppercase">
               Контакти
             </h3>
-            <ul className="mt-5 space-y-4">
+            <ul className="mt-4 space-y-1">
               <li>
                 <a
                   href={PHONE_HREF}
-                  className="font-mono text-lg text-paper transition-colors hover:text-magenta"
+                  className="block py-1.5 font-mono text-lg text-paper transition-colors hover:text-magenta"
                 >
                   {SITE.contacts.phoneDisplay}
                 </a>
@@ -91,13 +99,13 @@ export function SiteFooter() {
               <li>
                 <a
                   href={EMAIL_HREF}
-                  className="text-[14px] text-muted transition-colors hover:text-paper"
+                  className="block py-2 text-[14px] text-muted transition-colors hover:text-paper"
                 >
                   {SITE.contacts.email}
                 </a>
               </li>
               <li>
-                <address className="text-[14px] leading-relaxed text-muted not-italic">
+                <address className="py-2 text-[14px] leading-relaxed text-muted not-italic">
                   {SITE.address.full}
                 </address>
               </li>
@@ -107,7 +115,7 @@ export function SiteFooter() {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[14px] text-muted transition-colors hover:text-paper"
+                    className="block py-2 text-[14px] text-muted transition-colors hover:text-paper"
                   >
                     {social.label} {social.handle}
                   </a>

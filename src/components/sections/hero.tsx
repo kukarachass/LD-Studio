@@ -82,7 +82,7 @@ export function Hero() {
 
         <h1 className="font-display mt-7 text-[clamp(1.85rem,10vw,9rem)] leading-[0.86] font-black tracking-[-0.022em] uppercase">
           {TITLE_LINES.map((line, i) => (
-            <span key={line.text} className="block overflow-hidden">
+            <span key={line.text} className="block">
               <span
                 className={`animate-rise-in block ${line.indent} ${
                   line.gradient ? "text-spectrum" : ""

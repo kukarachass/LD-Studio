@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SERVICES } from "@/content/services";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -39,7 +40,13 @@ export function Services() {
             const isActive = service.slug === activeSlug;
 
             return (
-              <li key={service.slug} id={service.slug} className="border-b border-line">
+              <Reveal
+                as="li"
+                key={service.slug}
+                delay={Math.min(i, 4) * 0.06}
+                className="border-b border-line"
+              >
+                <div id={service.slug} className="scroll-mt-[calc(var(--header-h)+1.5rem)]">
                 {/* Заголовок обгортає кнопку: назва напряму має бути h3 для пошуку,
                     а вкладати h3 всередину button не дозволяє специфікація HTML. */}
                 <h3>
@@ -132,7 +139,8 @@ export function Services() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </li>
+                </div>
+              </Reveal>
             );
           })}
         </ul>

@@ -12,7 +12,7 @@ export function Contacts() {
   return (
     <section id="contacts" className="section-x mx-auto max-w-[110rem] py-20 sm:py-28">
       <SectionHeading
-        index="06"
+        index="07"
         eyebrow="Контакти"
         title={
           <>
