@@ -1,28 +1,43 @@
-import Link from "next/link";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { SiteHeader } from "@/components/layout/site-header";
+import { BeforeAfter } from "@/components/sections/before-after";
+import { Contacts } from "@/components/sections/contacts";
+import { Cta } from "@/components/sections/cta";
+import { Faq } from "@/components/sections/faq";
+import { Hero } from "@/components/sections/hero";
+import { Marquee } from "@/components/sections/marquee";
+import { Process } from "@/components/sections/process";
+import { Services } from "@/components/sections/services";
+import { Works } from "@/components/sections/works";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildFaqSchema, buildLocalBusinessSchema } from "@/lib/seo";
 
 /**
- * Тимчасова заглушка. Повний лендинг збирається після того,
- * як буде обрано дизайн-напрям на /design.
+ * Головна сторінка. Порядок секцій = порядок блоків нижче;
+ * щоб переставити або прибрати секцію, достатньо змінити цей список
+ * (і відповідний пункт у src/content/navigation.ts).
  */
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center gap-6 px-6 text-center">
-      <p className="font-mono text-[11px] tracking-[0.3em] text-ink-500 uppercase">
-        L.D_Studio · Одеса
-      </p>
-      <h1 className="font-display text-3xl font-semibold tracking-[-0.03em] text-ink-100">
-        Сайт у розробці
-      </h1>
-      <p className="max-w-md text-[15px] leading-relaxed text-ink-300">
-        Спочатку оберіть візуальний напрям — далі на його основі буде зібрано
-        повний сайт студії.
-      </p>
-      <Link
-        href="/design"
-        className="rounded-full border border-white/20 px-6 py-3 text-[13px] text-ink-100 transition-colors hover:border-white/50"
-      >
-        Переглянути варіанти дизайну →
-      </Link>
-    </main>
+    <>
+      <JsonLd schema={buildLocalBusinessSchema()} />
+      <JsonLd schema={buildFaqSchema()} />
+
+      <SiteHeader />
+
+      <main>
+        <Hero />
+        <Marquee />
+        <Services />
+        <BeforeAfter />
+        <Works />
+        <Process />
+        <Faq />
+        <Contacts />
+        <Cta />
+      </main>
+
+      <SiteFooter />
+    </>
   );
 }
