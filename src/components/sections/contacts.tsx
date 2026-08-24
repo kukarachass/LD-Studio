@@ -119,7 +119,7 @@ export function Contacts() {
 
             {/* Картка поверх карти */}
             <div className="pointer-events-none absolute inset-x-3 bottom-3 sm:inset-x-5 sm:bottom-5">
-              <div className="pointer-events-auto flex flex-col gap-4 rounded-sm border border-line bg-void/85 p-5 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+              <div className="pointer-events-auto flex flex-col gap-4 rounded-sm border border-line bg-void/94 p-5 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <div className="font-display text-sm font-extrabold tracking-[-0.02em] uppercase">
                     {SITE.legalName}
