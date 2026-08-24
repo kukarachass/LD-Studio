@@ -1,6 +1,5 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { CompareSlider } from "@/components/ui/compare-slider";
 import { Reveal } from "@/components/ui/reveal";
@@ -19,7 +18,7 @@ export function BeforeAfter() {
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute top-1/4 -left-32 h-96 w-96 rounded-full bg-cyan/10 blur-[130px]"
+        className="glow glow-cyan pointer-events-none top-1/4 -left-32 h-96 w-96"
       />
 
       <div className="section-x mx-auto max-w-[110rem]">
@@ -45,13 +44,15 @@ export function BeforeAfter() {
                   isActive ? "text-white" : "text-muted hover:text-paper",
                 )}
               >
-                {isActive && (
-                  <motion.span
-                    layoutId="ba-pill"
-                    className="absolute inset-0 rounded-full bg-spectrum"
-                    transition={{ type: "spring", stiffness: 400, damping: 34 }}
-                  />
-                )}
+                {/* Підкладка завжди в розмітці, змінюється лише прозорість —
+                    так перемикач не тягне за собою рушій layout-анімацій */}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "bg-spectrum absolute inset-0 rounded-full transition-opacity duration-300",
+                    isActive ? "opacity-100" : "opacity-0",
+                  )}
+                />
                 <span className="relative z-10">{pair.title}</span>
               </button>
             );
@@ -60,23 +61,17 @@ export function BeforeAfter() {
 
         <div className="grid gap-8 lg:grid-cols-[1.55fr_1fr] lg:items-center lg:gap-14">
           <Reveal from="scale" className="overflow-hidden rounded-sm border border-line">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-              >
-                <CompareSlider
-                  before={active.before}
-                  after={active.after}
-                  beforeAlt={`${active.title} — оптика до роботи студії`}
-                  afterAlt={`${active.title} — оптика після роботи студії`}
-                  aspect={active.aspect}
-                />
-              </motion.div>
-            </AnimatePresence>
+            {/* key на пару: зміна пари перемонтовує повзунок, а CSS-анімація
+                fade-up програється заново */}
+            <div key={active.id} className="animate-fade-up">
+              <CompareSlider
+                before={active.before}
+                after={active.after}
+                beforeAlt={`${active.title} — оптика до роботи студії`}
+                afterAlt={`${active.title} — оптика після роботи студії`}
+                aspect={active.aspect}
+              />
+            </div>
           </Reveal>
 
           <Reveal from="right" delay={0.1}>

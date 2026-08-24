@@ -114,7 +114,7 @@ export function Contacts() {
             {/* Легка кольорова вуаль, щоб карта не випадала зі стилістики */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 bg-[linear-gradient(140deg,rgba(124,59,255,0.14),transparent_45%,rgba(0,229,255,0.10))] mix-blend-screen"
+              className="pointer-events-none absolute inset-0 bg-[linear-gradient(140deg,rgba(124,59,255,0.10),transparent_45%,rgba(0,229,255,0.07))]"
             />
 
             {/* Картка поверх карти */}

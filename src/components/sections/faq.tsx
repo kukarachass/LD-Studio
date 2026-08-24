@@ -1,7 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { Collapse } from "@/components/ui/collapse";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { FAQ } from "@/content/faq";
@@ -42,6 +42,7 @@ export function Faq() {
                       "mt-1 font-mono text-[11px] tracking-[0.2em] transition-colors duration-300",
                       isOpen ? "text-cyan" : "text-faint",
                     )}
+                    aria-hidden
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
@@ -57,7 +58,7 @@ export function Faq() {
 
                   <span
                     className={cn(
-                      "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-[13px] transition-all duration-300",
+                      "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-[13px] transition-[transform,color,border-color] duration-300",
                       isOpen
                         ? "rotate-45 border-cyan text-cyan"
                         : "border-line text-faint group-hover:border-line-strong",
@@ -69,22 +70,11 @@ export function Faq() {
                 </button>
               </h3>
 
-              <AnimatePresence initial={false}>
-                {isOpen && (
-                  <motion.div
-                    id={`faq-panel-${i}`}
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    className="overflow-hidden"
-                  >
-                    <p className="max-w-2xl pb-7 pl-8 text-[14px] leading-relaxed text-muted sm:pl-12 sm:text-[15px]">
-                      {item.answer}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <Collapse open={isOpen} id={`faq-panel-${i}`}>
+                <p className="max-w-2xl pb-7 pl-8 text-[14px] leading-relaxed text-muted sm:pl-12 sm:text-[15px]">
+                  {item.answer}
+                </p>
+              </Collapse>
             </Reveal>
           );
         })}

@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, type Transition } from "motion/react";
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 type RevealFrom = "bottom" | "left" | "right" | "scale" | "none";
@@ -16,25 +15,53 @@ type RevealProps = {
   as?: "div" | "li" | "article" | "section" | "figure";
 };
 
-const OFFSET: Record<RevealFrom, { x: number; y: number; scale: number }> = {
-  bottom: { x: 0, y: 28, scale: 1 },
-  left: { x: -28, y: 0, scale: 1 },
-  right: { x: 28, y: 0, scale: 1 },
-  /** Для плиток галереї та карток: легкий наплив замість зсуву. */
-  scale: { x: 0, y: 20, scale: 0.965 },
-  none: { x: 0, y: 0, scale: 1 },
-};
-
-const TRANSITION: Transition = {
-  duration: 0.7,
-  ease: [0.16, 1, 0.3, 1],
+const FROM_CLASS: Record<RevealFrom, string> = {
+  bottom: "reveal-bottom",
+  left: "reveal-left",
+  right: "reveal-right",
+  scale: "reveal-scale",
+  none: "",
 };
 
 /**
- * Поява блока при прокрутці. Спрацьовує один раз, щоб сторінка не
- * «мерехтіла» при русі вгору-вниз. Користувачам із prefers-reduced-motion
- * motion сам віддасть кінцевий стан без руху.
+ * Один спостерігач на всю сторінку.
+ *
+ * Раніше кожен блок мав власну motion-анімацію і власний
+ * IntersectionObserver — при шести десятках блоків це помітна робота
+ * на етапі гідратації. Тепер JS лише додає клас, а рух робить CSS
+ * на композиторі.
  */
+let sharedObserver: IntersectionObserver | null = null;
+const pending = new WeakMap<Element, () => void>();
+
+function observe(element: Element, onEnter: () => void) {
+  if (typeof IntersectionObserver === "undefined") {
+    onEnter();
+    return () => {};
+  }
+
+  sharedObserver ??= new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        pending.get(entry.target)?.();
+        pending.delete(entry.target);
+        sharedObserver?.unobserve(entry.target);
+      }
+    },
+    { rootMargin: "0px 0px -8% 0px", threshold: 0.01 },
+  );
+
+  pending.set(element, onEnter);
+  sharedObserver.observe(element);
+
+  return () => {
+    pending.delete(element);
+    sharedObserver?.unobserve(element);
+  };
+}
+
+/** Поява блока при прокрутці. Спрацьовує один раз. */
 export function Reveal({
   children,
   delay = 0,
@@ -42,19 +69,35 @@ export function Reveal({
   className,
   as = "div",
 }: RevealProps) {
-  const MotionTag = motion[as];
-  const offset = OFFSET[from];
+  const ref = useRef<HTMLElement>(null);
+  const [visible, setVisible] = useState(false);
+  const Tag = as as ElementType;
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    /*
+     * Те, що вже видно на момент завантаження, показуємо одразу: чекати
+     * на спостерігача тут немає сенсу, а зайва анімація першого екрана
+     * лише відтягує момент, коли сторінка виглядає готовою.
+     */
+    const box = element.getBoundingClientRect();
+    if (box.top < window.innerHeight && box.bottom > 0) {
+      setVisible(true);
+      return;
+    }
+
+    return observe(element, () => setVisible(true));
+  }, []);
 
   return (
-    <MotionTag
-      /* js-reveal — щоб CSS міг показати блок, якщо скрипти вимкнені */
-      className={cn("js-reveal", className)}
-      initial={{ opacity: 0, ...offset }}
-      whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-12% 0px -8% 0px" }}
-      transition={{ ...TRANSITION, delay }}
+    <Tag
+      ref={ref}
+      className={cn("reveal", FROM_CLASS[from], visible && "is-visible", className)}
+      style={delay ? { transitionDelay: `${delay}s` } : undefined}
     >
       {children}
-    </MotionTag>
+    </Tag>
   );
 }

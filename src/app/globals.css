@@ -94,17 +94,6 @@ body {
   scrollbar-color: var(--color-surface-2) transparent;
 }
 
-/**
- * Якщо скрипти вимкнені, motion лишає блоки в стані `opacity: 0` назавжди.
- * Показуємо їх примусово — контент важливіший за анімацію.
- */
-@media (scripting: none) {
-  .js-reveal {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -166,13 +155,21 @@ body {
 @utility grain {
   position: relative;
 }
+/**
+ * Зерно. Без mix-blend-mode: режим накладання змушує браузер створювати
+ * окрему групу композитингу на весь екран — на телефоні це відчутно.
+ * Нижче 768px шар взагалі не малюємо: текстури там не видно.
+ */
 @utility grain-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.035;
-  mix-blend-mode: overlay;
+  opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  display: none;
+  @media (min-width: 768px) {
+    display: block;
+  }
 }
 
 /** Стандартний внутрішній відступ секції. */
@@ -192,10 +189,10 @@ body {
 
 @keyframes marquee-x {
   from {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
@@ -235,6 +232,15 @@ body {
   }
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -261,10 +267,148 @@ body {
   animation: rise-in 0.85s var(--ease-out-expo) both;
 }
 
+@utility animate-fade-in {
+  animation: fade-in 0.45s var(--ease-out-expo) both;
+}
+
 @utility animate-fade-up {
   animation: fade-up 0.8s var(--ease-out-expo) both;
 }
 
 @utility animate-zoom-in {
   animation: zoom-in 1.4s var(--ease-out-expo) both;
+}
+
+/* ==================================================================
+   ПРОДУКТИВНІСТЬ
+
+   Три речі, які найдорожче коштують на телефоні, і чим їх замінено:
+
+   1) filter: blur() на великих плямах світла.
+      Розмиття перемальовується щокадру й масштабується як квадрат
+      радіуса. Замість нього — radial-gradient: візуально те саме,
+      але це звичайна заливка, майже безкоштовна.
+
+   2) Анімація height: auto в акордеонах.
+      Кожен кадр перераховував layout усієї сторінки нижче — саме
+      звідси «10 fps». Замість неї — grid-template-rows: 0fr → 1fr
+      з `contain`, і без участі JS у кожному кадрі.
+
+   3) mix-blend-mode і великі backdrop-filter.
+      Змушують створювати окремі групи композитингу. Прибрані там,
+      де вони нічого не додавали.
+================================================================== */
+
+/* --- Плями світла замість filter: blur ------------------------- */
+
+.glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.glow-magenta {
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 45, 143, 0.3),
+    rgba(255, 45, 143, 0)
+  );
+}
+
+.glow-violet {
+  background: radial-gradient(
+    closest-side,
+    rgba(124, 59, 255, 0.26),
+    rgba(124, 59, 255, 0)
+  );
+}
+
+.glow-cyan {
+  background: radial-gradient(
+    closest-side,
+    rgba(0, 229, 255, 0.18),
+    rgba(0, 229, 255, 0)
+  );
+}
+
+/**
+ * Дрейф плям вмикаємо лише на широких екранах: на телефоні це
+ * постійна робота композитора заради ефекту, якого майже не видно.
+ */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .glow-drift {
+    animation: spectrum-drift 22s ease-in-out infinite;
+  }
+  .glow-drift-slow {
+    animation: spectrum-drift 30s ease-in-out infinite reverse;
+  }
+}
+
+/* --- Розкриття блоків без перерахунку layout усієї сторінки ----- */
+
+.collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  /* Локалізує перерахунок у межах блока замість усього документа */
+  contain: layout;
+  transition:
+    grid-template-rows 360ms var(--ease-out-quint),
+    opacity 220ms linear;
+}
+
+.collapse > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.collapse[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/* --- Поява при прокрутці на CSS замість JS-анімації ------------- */
+
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 700ms var(--ease-out-expo),
+    transform 700ms var(--ease-out-expo);
+}
+
+.reveal-bottom {
+  transform: translate3d(0, 28px, 0);
+}
+.reveal-left {
+  transform: translate3d(-28px, 0, 0);
+}
+.reveal-right {
+  transform: translate3d(28px, 0, 0);
+}
+.reveal-scale {
+  transform: translate3d(0, 20px, 0) scale(0.965);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Немає скриптів — немає й сенсу ховати контент */
+@media (scripting: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .collapse {
+    transition: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }

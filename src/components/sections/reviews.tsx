@@ -19,7 +19,7 @@ export function Reviews() {
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-24 right-1/4 h-80 w-80 rounded-full bg-violet/12 blur-[130px]"
+        className="glow glow-violet pointer-events-none -top-24 right-1/4 h-80 w-80 opacity-70"
       />
 
       <div className="section-x relative mx-auto max-w-[110rem]">

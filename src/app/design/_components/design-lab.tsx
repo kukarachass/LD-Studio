@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import { useState } from "react";
 import { VariantBoard } from "./variant-board";
 import { DESIGN_VARIANTS } from "../variants";
@@ -40,14 +39,13 @@ export function DesignLab() {
                       : "border-white/12 text-muted hover:border-white/30 hover:text-paper"
                   }`}
                 >
-                  {isActive && (
-                    <motion.span
-                      layoutId="lab-tab"
-                      className="absolute inset-0 rounded-full"
-                      style={{ background: v.tokens["--v-accent"] }}
-                      transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                    />
-                  )}
+                  <span
+                    aria-hidden
+                    className={`absolute inset-0 rounded-full transition-opacity duration-300 ${
+                      isActive ? "opacity-100" : "opacity-0"
+                    }`}
+                    style={{ background: v.tokens["--v-accent"] }}
+                  />
                   <span className="relative z-10 font-mono text-[10px] tracking-[0.18em] opacity-70">
                     {v.index}
                   </span>{" "}
@@ -67,14 +65,9 @@ export function DesignLab() {
           саме в цьому напрямі.
         </p>
 
-        <motion.div
-          key={active.id}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        >
+        <div key={active.id} className="animate-fade-up">
           <VariantBoard variant={active} />
-        </motion.div>
+        </div>
 
         <footer className="mt-10 border-t border-white/10 pt-8 pb-16">
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">

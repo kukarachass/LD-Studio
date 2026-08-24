@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useInView } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -56,8 +55,7 @@ export function CompareSlider({
   const [position, setPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [hintVisible, setHintVisible] = useState(true);
-
-  const inView = useInView(containerRef, { once: true, margin: "-20%" });
+  const [inView, setInView] = useState(false);
 
   const markInteracted = useCallback(() => {
     interacted.current = true;
@@ -70,6 +68,27 @@ export function CompareSlider({
     const rect = el.getBoundingClientRect();
     if (rect.width === 0) return;
     setPosition(clamp(((clientX - rect.left) / rect.width) * 100));
+  }, []);
+
+  /* --- Помічаємо, коли блок уперше потрапив у видиму область ------ */
+  useEffect(() => {
+    const element = containerRef.current;
+    if (!element || typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setInView(true);
+        observer.disconnect();
+      },
+      { rootMargin: "-20% 0px", threshold: 0.01 },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
   }, []);
 
   /* --- Автопрев'ю при першій появі в екрані --------------------- */
