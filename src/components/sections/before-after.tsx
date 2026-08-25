@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
 import { CompareSlider } from "@/components/ui/compare-slider";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -10,34 +11,6 @@ import { cn } from "@/lib/utils";
 export function BeforeAfter() {
   const [activeId, setActiveId] = useState(BEFORE_AFTER[0].id);
   const active = BEFORE_AFTER.find((p) => p.id === activeId) ?? BEFORE_AFTER[0];
-
-  const switcherRef = useRef<HTMLDivElement>(null);
-  const pillRef = useRef<HTMLSpanElement>(null);
-
-  /*
-   * Підкладка активної кнопки їде за нею, як і раніше. Позицію знімаємо
-   * з самої кнопки й пишемо прямо в стиль — без стану, без зайвого
-   * перерендеру й без бібліотеки layout-анімацій.
-   */
-  useEffect(() => {
-    const move = () => {
-      const switcher = switcherRef.current;
-      const pill = pillRef.current;
-      if (!switcher || !pill) return;
-
-      const button = switcher.querySelector<HTMLElement>('[aria-pressed="true"]');
-      if (!button) return;
-
-      pill.style.width = `${button.offsetWidth}px`;
-      pill.style.height = `${button.offsetHeight}px`;
-      pill.style.transform = `translate3d(${button.offsetLeft}px, ${button.offsetTop}px, 0)`;
-      pill.style.opacity = "1";
-    };
-
-    move();
-    window.addEventListener("resize", move);
-    return () => window.removeEventListener("resize", move);
-  }, [activeId]);
 
   return (
     <section
@@ -58,12 +31,7 @@ export function BeforeAfter() {
         />
 
         {/* Перемикач пар */}
-        <div ref={switcherRef} className="relative mb-8 flex flex-wrap gap-2">
-          <span
-            ref={pillRef}
-            aria-hidden
-            className="bg-spectrum ease-[var(--ease-out-quint)] absolute top-0 left-0 rounded-full opacity-0 transition-[transform,width,height] duration-400"
-          />
+        <div className="mb-8 flex flex-wrap gap-2">
           {BEFORE_AFTER.map((pair) => {
             const isActive = pair.id === activeId;
             return (
@@ -77,6 +45,13 @@ export function BeforeAfter() {
                   isActive ? "text-white" : "text-muted hover:text-paper",
                 )}
               >
+                {isActive && (
+                  <motion.span
+                    layoutId="ba-pill"
+                    className="absolute inset-0 rounded-full bg-spectrum"
+                    transition={{ type: "spring", stiffness: 400, damping: 34 }}
+                  />
+                )}
                 <span className="relative z-10">{pair.title}</span>
               </button>
             );
@@ -85,21 +60,23 @@ export function BeforeAfter() {
 
         <div className="grid gap-8 lg:grid-cols-[1.55fr_1fr] lg:items-center lg:gap-14">
           <Reveal from="scale" className="overflow-hidden rounded-sm border border-line">
-            {/* key на пару: зміна пари перемонтовує повзунок, і затухання
-                програється заново */}
-            <div
-              key={active.id}
-              className="animate-fade-in"
-              style={{ animationDuration: "0.25s" }}
-            >
-              <CompareSlider
-                before={active.before}
-                after={active.after}
-                beforeAlt={`${active.title} — оптика до роботи студії`}
-                afterAlt={`${active.title} — оптика після роботи студії`}
-                aspect={active.aspect}
-              />
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+              >
+                <CompareSlider
+                  before={active.before}
+                  after={active.after}
+                  beforeAlt={`${active.title} — оптика до роботи студії`}
+                  afterAlt={`${active.title} — оптика після роботи студії`}
+                  aspect={active.aspect}
+                />
+              </motion.div>
+            </AnimatePresence>
           </Reveal>
 
           <Reveal from="right" delay={0.1}>
