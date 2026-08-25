@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Work } from "@/content/works";
+import { cn } from "@/lib/utils";
 
 type LightboxProps = {
   works: Work[];
@@ -12,18 +13,28 @@ type LightboxProps = {
   onNavigate: (index: number) => void;
 };
 
+/** Тривалість затухання при закритті — збігається з transition нижче. */
+const CLOSE_DURATION = 220;
+
 /**
  * Повноекранний перегляд роботи з галереї.
  *
- * Поява зроблена на CSS-переході: вікно монтується прозорим, а клас
- * видимості додається наступним кадром. Так не потрібна бібліотека
- * анімацій заради одного затухання.
+ * Поява й затухання — на CSS-переходах: вікно монтується прозорим, клас
+ * видимості додається наступним кадром, а при закритті спершу гасне і
+ * лише потім зникає з розмітки. Бібліотека анімацій для цього не потрібна.
  */
 export function Lightbox({ works, index, onClose, onNavigate }: LightboxProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const [visible, setVisible] = useState(false);
 
   const isOpen = index !== null;
   const work = isOpen ? works[index] : null;
+
+  /* Закриваємо із затуханням: спершу ховаємо, потім прибираємо з розмітки */
+  const requestClose = useCallback(() => {
+    setVisible(false);
+    window.setTimeout(onClose, CLOSE_DURATION);
+  }, [onClose]);
 
   const goPrev = useCallback(() => {
     if (index === null) return;
@@ -34,6 +45,16 @@ export function Lightbox({ works, index, onClose, onNavigate }: LightboxProps) {
     if (index === null) return;
     onNavigate((index + 1) % works.length);
   }, [index, works.length, onNavigate]);
+
+  /* Поява: клас видимості додаємо наступним кадром, щоб перехід програвся */
+  useEffect(() => {
+    if (!isOpen) return;
+    const frame = requestAnimationFrame(() => setVisible(true));
+    return () => {
+      cancelAnimationFrame(frame);
+      setVisible(false);
+    };
+  }, [isOpen]);
 
   /*
    * Блокування прокрутки фону. Ефект залежить ТІЛЬКИ від isOpen — інакше
@@ -57,14 +78,14 @@ export function Lightbox({ works, index, onClose, onNavigate }: LightboxProps) {
     if (!isOpen) return;
 
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") requestClose();
       else if (event.key === "ArrowLeft") goPrev();
       else if (event.key === "ArrowRight") goNext();
     }
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isOpen, onClose, goPrev, goNext]);
+  }, [isOpen, requestClose, goPrev, goNext]);
 
   if (!isOpen || !work) return null;
 
@@ -73,15 +94,17 @@ export function Lightbox({ works, index, onClose, onNavigate }: LightboxProps) {
       role="dialog"
       aria-modal="true"
       aria-label={`${work.title} — ${work.caption}`}
-      /* Закрите вікно взагалі не в розмітці, тож CSS-анімація появи
-         програється сама при вставці елемента — стан для цього не потрібен */
-      className="bg-void/95 animate-fade-in fixed inset-0 z-[100] flex items-center justify-center"
-      onClick={onClose}
+      className={cn(
+        "bg-void/95 fixed inset-0 z-[100] flex items-center justify-center transition-opacity",
+        visible ? "opacity-100" : "opacity-0",
+      )}
+      style={{ transitionDuration: `${CLOSE_DURATION}ms` }}
+      onClick={requestClose}
     >
       <button
         ref={closeRef}
         type="button"
-        onClick={onClose}
+        onClick={requestClose}
         aria-label="Закрити"
         className="absolute top-5 right-5 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-line text-paper transition-colors hover:border-magenta hover:text-magenta"
       >
@@ -114,7 +137,7 @@ export function Lightbox({ works, index, onClose, onNavigate }: LightboxProps) {
 
       <figure
         key={work.id}
-        className="animate-fade-up flex max-h-[88dvh] w-full max-w-5xl flex-col items-center gap-4 px-14 sm:px-20"
+        className="animate-fade-scale flex max-h-[88dvh] w-full max-w-5xl flex-col items-center gap-4 px-14 sm:px-20"
         onClick={(e) => e.stopPropagation()}
       >
         <Image

@@ -49,7 +49,7 @@ function observe(element: Element, onEnter: () => void) {
         sharedObserver?.unobserve(entry.target);
       }
     },
-    { rootMargin: "0px 0px -8% 0px", threshold: 0.01 },
+    { rootMargin: "-12% 0px -8% 0px", threshold: 0.01 },
   );
 
   pending.set(element, onEnter);
@@ -78,14 +78,15 @@ export function Reveal({
     if (!element) return;
 
     /*
-     * Те, що вже видно на момент завантаження, показуємо одразу: чекати
-     * на спостерігача тут немає сенсу, а зайва анімація першого екрана
-     * лише відтягує момент, коли сторінка виглядає готовою.
+     * Якщо блок уже у в'юпорті на момент монтування, показуємо його самі —
+     * спостерігач у цьому випадку може не спрацювати. Клас додаємо
+     * наступним кадром, щоб CSS-перехід справді програвся: поведінка
+     * така сама, як була раніше.
      */
     const box = element.getBoundingClientRect();
     if (box.top < window.innerHeight && box.bottom > 0) {
-      setVisible(true);
-      return;
+      const frame = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(frame);
     }
 
     return observe(element, () => setVisible(true));

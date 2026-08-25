@@ -15,37 +15,46 @@ export function SiteHeader() {
   const scrolledRef = useRef(false);
 
   /*
-   * Прогрес прокрутки пишемо прямо в transform смуги, а стан «сторінку
-   * прокручено» перемикаємо лише на перетині порогу. Обробник пасивний і
-   * зведений до одного кадру через requestAnimationFrame — тобто на саму
-   * прокрутку ми майже не витрачаємось.
+   * Прогрес прокрутки пишемо прямо в transform смуги — без стану й без
+   * перерендеру. Значення підтягується до цілі поступово, щоб смуга
+   * рухалась так само м'яко, як раніше з пружиною. Кадри крутяться лише
+   * поки різниця помітна, далі цикл зупиняється сам.
    */
   useEffect(() => {
     let frame = 0;
+    let current = 0;
 
-    const apply = () => {
-      frame = 0;
+    const target = () => {
       const doc = document.documentElement;
       const max = doc.scrollHeight - doc.clientHeight;
-      const progress = max > 0 ? doc.scrollTop / max : 0;
+      return max > 0 ? doc.scrollTop / max : 0;
+    };
+
+    const tick = () => {
+      const goal = target();
+      current += (goal - current) * 0.18;
+
+      if (Math.abs(goal - current) < 0.0005) current = goal;
 
       progressRef.current?.style.setProperty(
         "transform",
-        `scaleX(${progress.toFixed(4)})`,
+        `scaleX(${current.toFixed(4)})`,
       );
 
-      const next = doc.scrollTop > 24;
+      frame = current === goal ? 0 : requestAnimationFrame(tick);
+    };
+
+    const onScroll = () => {
+      const next = document.documentElement.scrollTop > 24;
       if (next !== scrolledRef.current) {
         scrolledRef.current = next;
         setScrolled(next);
       }
+      if (!frame) frame = requestAnimationFrame(tick);
     };
 
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(apply);
-    };
-
-    apply();
+    current = target();
+    tick();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
 
@@ -79,7 +88,7 @@ export function SiteHeader() {
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-colors duration-500",
           scrolled && !menuOpen
-            ? "border-b border-line bg-void/92 backdrop-blur-sm"
+            ? "border-b border-line bg-void/80 backdrop-blur-xl"
             : "border-b border-transparent",
         )}
       >
@@ -168,13 +177,13 @@ export function SiteHeader() {
       */}
       <div
         className={cn(
-          "bg-void/98 fixed inset-0 z-40 flex flex-col pt-[var(--header-h)] transition-opacity duration-300 lg:hidden",
+          "bg-void/97 fixed inset-0 z-40 flex flex-col pt-[var(--header-h)] backdrop-blur-2xl transition-opacity duration-300 lg:hidden",
           menuOpen ? "opacity-100" : "pointer-events-none opacity-0",
         )}
         inert={!menuOpen}
       >
         <div
-          className="glow glow-violet pointer-events-none -top-20 -right-16 h-72 w-72"
+          className="pointer-events-none absolute -top-20 -right-16 h-72 w-72 rounded-full bg-violet/25 blur-[100px]"
           aria-hidden
         />
 

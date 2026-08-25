@@ -20,7 +20,7 @@ export function Cta() {
 
       <div
         aria-hidden
-        className="glow glow-violet pointer-events-none -bottom-32 left-1/3 h-[26rem] w-[26rem]"
+        className="pointer-events-none absolute -bottom-32 left-1/3 h-[26rem] w-[26rem] rounded-full bg-violet/20 blur-[130px]"
       />
 
       <div className="section-x relative mx-auto max-w-[110rem] py-20 sm:py-28">

@@ -11,7 +11,7 @@ export function Process() {
     >
       <div
         aria-hidden
-        className="glow glow-magenta pointer-events-none -right-24 bottom-0 h-96 w-96 opacity-60"
+        className="pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-magenta/10 blur-[130px]"
       />
 
       <div className="section-x mx-auto max-w-[110rem]">

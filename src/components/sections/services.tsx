@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Collapse } from "@/components/ui/collapse";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SERVICES } from "@/content/services";
@@ -115,7 +115,7 @@ export function Services() {
                     </button>
                   </h3>
 
-                  <Collapse open={isActive} id={`${service.slug}-panel`}>
+                  <Disclosure open={isActive} id={`${service.slug}-panel`}>
                     <div className="pb-6 pl-8 sm:pl-12">
                       <p className="max-w-xl text-[14px] leading-relaxed text-muted sm:text-[15px]">
                         {service.summary}
@@ -146,7 +146,7 @@ export function Services() {
                         </div>
                       )}
                     </div>
-                  </Collapse>
+                  </Disclosure>
                 </div>
               </Reveal>
             );

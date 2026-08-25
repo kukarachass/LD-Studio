@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CompareSlider } from "@/components/ui/compare-slider";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -11,6 +11,34 @@ export function BeforeAfter() {
   const [activeId, setActiveId] = useState(BEFORE_AFTER[0].id);
   const active = BEFORE_AFTER.find((p) => p.id === activeId) ?? BEFORE_AFTER[0];
 
+  const switcherRef = useRef<HTMLDivElement>(null);
+  const pillRef = useRef<HTMLSpanElement>(null);
+
+  /*
+   * Підкладка активної кнопки їде за нею, як і раніше. Позицію знімаємо
+   * з самої кнопки й пишемо прямо в стиль — без стану, без зайвого
+   * перерендеру й без бібліотеки layout-анімацій.
+   */
+  useEffect(() => {
+    const move = () => {
+      const switcher = switcherRef.current;
+      const pill = pillRef.current;
+      if (!switcher || !pill) return;
+
+      const button = switcher.querySelector<HTMLElement>('[aria-pressed="true"]');
+      if (!button) return;
+
+      pill.style.width = `${button.offsetWidth}px`;
+      pill.style.height = `${button.offsetHeight}px`;
+      pill.style.transform = `translate3d(${button.offsetLeft}px, ${button.offsetTop}px, 0)`;
+      pill.style.opacity = "1";
+    };
+
+    move();
+    window.addEventListener("resize", move);
+    return () => window.removeEventListener("resize", move);
+  }, [activeId]);
+
   return (
     <section
       id="before-after"
@@ -18,7 +46,7 @@ export function BeforeAfter() {
     >
       <div
         aria-hidden
-        className="glow glow-cyan pointer-events-none top-1/4 -left-32 h-96 w-96"
+        className="pointer-events-none absolute top-1/4 -left-32 h-96 w-96 rounded-full bg-cyan/10 blur-[130px]"
       />
 
       <div className="section-x mx-auto max-w-[110rem]">
@@ -30,7 +58,12 @@ export function BeforeAfter() {
         />
 
         {/* Перемикач пар */}
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div ref={switcherRef} className="relative mb-8 flex flex-wrap gap-2">
+          <span
+            ref={pillRef}
+            aria-hidden
+            className="bg-spectrum ease-[var(--ease-out-quint)] absolute top-0 left-0 rounded-full opacity-0 transition-[transform,width,height] duration-400"
+          />
           {BEFORE_AFTER.map((pair) => {
             const isActive = pair.id === activeId;
             return (
@@ -44,15 +77,6 @@ export function BeforeAfter() {
                   isActive ? "text-white" : "text-muted hover:text-paper",
                 )}
               >
-                {/* Підкладка завжди в розмітці, змінюється лише прозорість —
-                    так перемикач не тягне за собою рушій layout-анімацій */}
-                <span
-                  aria-hidden
-                  className={cn(
-                    "bg-spectrum absolute inset-0 rounded-full transition-opacity duration-300",
-                    isActive ? "opacity-100" : "opacity-0",
-                  )}
-                />
                 <span className="relative z-10">{pair.title}</span>
               </button>
             );
@@ -61,9 +85,13 @@ export function BeforeAfter() {
 
         <div className="grid gap-8 lg:grid-cols-[1.55fr_1fr] lg:items-center lg:gap-14">
           <Reveal from="scale" className="overflow-hidden rounded-sm border border-line">
-            {/* key на пару: зміна пари перемонтовує повзунок, а CSS-анімація
-                fade-up програється заново */}
-            <div key={active.id} className="animate-fade-up">
+            {/* key на пару: зміна пари перемонтовує повзунок, і затухання
+                програється заново */}
+            <div
+              key={active.id}
+              className="animate-fade-in"
+              style={{ animationDuration: "0.25s" }}
+            >
               <CompareSlider
                 before={active.before}
                 after={active.after}

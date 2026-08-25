@@ -57,15 +57,15 @@ export function Hero() {
       {/* Світлові витоки */}
       <div
         aria-hidden
-        className="glow glow-magenta glow-drift pointer-events-none -top-32 -left-24 h-[26rem] w-[26rem]"
+        className="pointer-events-none absolute -top-32 -left-24 h-[26rem] w-[26rem] rounded-full bg-magenta/22 blur-[120px] [animation:spectrum-drift_18s_ease-in-out_infinite]"
       />
       <div
         aria-hidden
-        className="glow glow-violet glow-drift-slow pointer-events-none -bottom-40 left-1/4 h-[30rem] w-[30rem]"
+        className="pointer-events-none absolute -bottom-40 left-1/4 h-[30rem] w-[30rem] rounded-full bg-violet/18 blur-[140px] [animation:spectrum-drift_24s_ease-in-out_infinite_reverse]"
       />
       <div
         aria-hidden
-        className="glow glow-cyan pointer-events-none top-1/3 right-0 h-64 w-64"
+        className="pointer-events-none absolute top-1/3 right-0 h-64 w-64 rounded-full bg-cyan/12 blur-[110px]"
       />
 
       <div className="section-x relative mx-auto w-full max-w-[110rem]">

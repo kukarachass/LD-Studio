@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Collapse } from "@/components/ui/collapse";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { FAQ } from "@/content/faq";
@@ -70,11 +70,11 @@ export function Faq() {
                 </button>
               </h3>
 
-              <Collapse open={isOpen} id={`faq-panel-${i}`}>
+              <Disclosure open={isOpen} id={`faq-panel-${i}`}>
                 <p className="max-w-2xl pb-7 pl-8 text-[14px] leading-relaxed text-muted sm:pl-12 sm:text-[15px]">
                   {item.answer}
                 </p>
-              </Collapse>
+              </Disclosure>
             </Reveal>
           );
         })}
