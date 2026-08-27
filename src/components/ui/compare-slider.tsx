@@ -15,6 +15,9 @@ type CompareSliderProps = {
   className?: string;
 };
 
+/** Стартове положення смуги — рівно посередині кадру. */
+const START_POSITION = 50;
+
 /** Кадри автопрев'ю: показуємо, що смугу можна тягнути. */
 const DEMO_KEYFRAMES = [50, 80, 24, 50];
 const DEMO_DURATION = 2200;
@@ -52,23 +55,69 @@ export function CompareSlider({
   const dragging = useRef(false);
   const interacted = useRef(false);
 
-  const [position, setPosition] = useState(50);
+  /*
+   * Позиція смуги живе в ref, а не в стані.
+   *
+   * Раніше кожен кадр перетягування (і кожен кадр автопрев'ю — а це
+   * 2.2 секунди по 60 разів) перемальовував увесь React-піддерев'я, щоб
+   * змінити п'ять inline-стилів. На iPhone це помітно збігалось із
+   * моментом, коли блок з'являється в екрані. Тепер ті самі п'ять
+   * стилів пишуться прямо в DOM — кадр виходить той самий, роботи
+   * менше на порядок.
+   */
+  const positionRef = useRef(START_POSITION);
+  const clipRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
+  const beforeLabelRef = useRef<HTMLSpanElement>(null);
+  const afterLabelRef = useRef<HTMLSpanElement>(null);
+
   const [isDragging, setIsDragging] = useState(false);
   const [hintVisible, setHintVisible] = useState(true);
   const [inView, setInView] = useState(false);
+
+  const applyPosition = useCallback((next: number) => {
+    const value = clamp(next);
+    positionRef.current = value;
+
+    const offset = `${value}%`;
+
+    if (clipRef.current) {
+      clipRef.current.style.clipPath = `inset(0 ${100 - value}% 0 0)`;
+    }
+    if (barRef.current) barRef.current.style.left = offset;
+
+    const handle = handleRef.current;
+    if (handle) {
+      const rounded = Math.round(value);
+      handle.style.left = offset;
+      handle.setAttribute("aria-valuenow", String(rounded));
+      handle.setAttribute("aria-valuetext", `Показано ${rounded}% кадру «до»`);
+    }
+
+    if (beforeLabelRef.current) {
+      beforeLabelRef.current.style.opacity = value < 16 ? "0" : "1";
+    }
+    if (afterLabelRef.current) {
+      afterLabelRef.current.style.opacity = value > 84 ? "0" : "1";
+    }
+  }, []);
 
   const markInteracted = useCallback(() => {
     interacted.current = true;
     setHintVisible(false);
   }, []);
 
-  const updateFromClientX = useCallback((clientX: number) => {
-    const el = containerRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    if (rect.width === 0) return;
-    setPosition(clamp(((clientX - rect.left) / rect.width) * 100));
-  }, []);
+  const updateFromClientX = useCallback(
+    (clientX: number) => {
+      const el = containerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      if (rect.width === 0) return;
+      applyPosition(((clientX - rect.left) / rect.width) * 100);
+    },
+    [applyPosition],
+  );
 
   /* --- Помічаємо, коли блок уперше потрапив у видиму область ------ */
   useEffect(() => {
@@ -105,7 +154,7 @@ export function CompareSlider({
       const segment = easeInOutQuad(progress) * (DEMO_KEYFRAMES.length - 1);
       const i = Math.min(DEMO_KEYFRAMES.length - 2, Math.floor(segment));
       const local = segment - i;
-      setPosition(
+      applyPosition(
         DEMO_KEYFRAMES[i] + (DEMO_KEYFRAMES[i + 1] - DEMO_KEYFRAMES[i]) * local,
       );
       if (progress < 1) raf = requestAnimationFrame(tick);
@@ -113,7 +162,7 @@ export function CompareSlider({
 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [inView]);
+  }, [inView, applyPosition]);
 
   /* --- Вказівник -------------------------------------------------- */
   function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
@@ -141,17 +190,18 @@ export function CompareSlider({
   /* --- Клавіатура ------------------------------------------------- */
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     const step = event.shiftKey ? 10 : 2;
+    const current = positionRef.current;
     let next: number | null = null;
 
-    if (event.key === "ArrowLeft") next = position - step;
-    else if (event.key === "ArrowRight") next = position + step;
+    if (event.key === "ArrowLeft") next = current - step;
+    else if (event.key === "ArrowRight") next = current + step;
     else if (event.key === "Home") next = 0;
     else if (event.key === "End") next = 100;
 
     if (next === null) return;
     event.preventDefault();
     markInteracted();
-    setPosition(clamp(next));
+    applyPosition(next);
   }
 
   return (
@@ -181,8 +231,9 @@ export function CompareSlider({
 
       {/* До — обрізаний шар зверху */}
       <div
+        ref={clipRef}
         className="absolute inset-0"
-        style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
+        style={{ clipPath: `inset(0 ${100 - START_POSITION}% 0 0)` }}
       >
         <Image
           src={before}
@@ -198,36 +249,40 @@ export function CompareSlider({
 
       {/* Підписи */}
       <span
+        ref={beforeLabelRef}
         className="pointer-events-none absolute top-4 left-4 rounded-full border border-line bg-void/70 px-3 py-1.5 font-mono text-[10px] tracking-[0.22em] text-paper/80 uppercase backdrop-blur-sm transition-opacity duration-300"
-        style={{ opacity: position < 16 ? 0 : 1 }}
+        style={{ opacity: START_POSITION < 16 ? 0 : 1 }}
       >
         До
       </span>
       <span
+        ref={afterLabelRef}
         className="pointer-events-none absolute top-4 right-4 rounded-full border border-magenta/50 bg-void/70 px-3 py-1.5 font-mono text-[10px] tracking-[0.22em] text-magenta uppercase backdrop-blur-sm transition-opacity duration-300"
-        style={{ opacity: position > 84 ? 0 : 1 }}
+        style={{ opacity: START_POSITION > 84 ? 0 : 1 }}
       >
         Після
       </span>
 
       {/* Смуга */}
       <div
+        ref={barRef}
         className="pointer-events-none absolute inset-y-0 z-10 w-px bg-spectrum"
         style={{
-          left: `${position}%`,
+          left: `${START_POSITION}%`,
           boxShadow: "0 0 24px 2px rgba(255,45,143,0.55)",
         }}
       />
 
       {/* Ручка */}
       <div
+        ref={handleRef}
         role="slider"
         tabIndex={0}
         aria-label="Порівняння до та після: перетягніть, щоб змінити межу"
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuenow={Math.round(position)}
-        aria-valuetext={`Показано ${Math.round(position)}% кадру «до»`}
+        aria-valuenow={START_POSITION}
+        aria-valuetext={`Показано ${START_POSITION}% кадру «до»`}
         onKeyDown={handleKeyDown}
         className={cn(
           "absolute top-1/2 z-20 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2",
@@ -236,7 +291,7 @@ export function CompareSlider({
           isDragging ? "scale-110" : "hover:scale-105",
         )}
         style={{
-          left: `${position}%`,
+          left: `${START_POSITION}%`,
           boxShadow: "0 0 32px -4px rgba(124,59,255,0.9)",
         }}
       >

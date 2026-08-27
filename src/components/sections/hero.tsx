@@ -47,15 +47,22 @@ export function Hero() {
                     className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,3,8,0.9)_0%,rgba(5,3,8,0.74)_45%,rgba(5,3,8,0.97)_100%)] lg:bg-[linear-gradient(90deg,var(--color-void)_2%,rgba(5,3,8,0.88)_30%,rgba(5,3,8,0.2)_74%,rgba(5,3,8,0.5)_100%)]"/>
             </div>
 
-            {/* Світлові витоки */}
+            {/* Світлові витоки.
+                Рух — на зовнішньому вузлі, розмиття — на внутрішньому:
+                див. коментар до .leak у globals.css. Геометрія й кольори
+                ті самі, що були. */}
             <div
                 aria-hidden
-                className="pointer-events-none absolute -top-32 -left-24 h-[26rem] w-[26rem] rounded-full bg-magenta/22 blur-[120px] [animation:spectrum-drift_18s_ease-in-out_infinite]"
-            />
+                className="leak pointer-events-none absolute -top-32 -left-24 h-[26rem] w-[26rem] [animation:spectrum-drift_18s_ease-in-out_infinite]"
+            >
+                <div className="bg-magenta/22 blur-[120px]"/>
+            </div>
             <div
                 aria-hidden
-                className="pointer-events-none absolute -bottom-40 left-1/4 h-[30rem] w-[30rem] rounded-full bg-violet/18 blur-[140px] [animation:spectrum-drift_24s_ease-in-out_infinite_reverse]"
-            />
+                className="leak pointer-events-none absolute -bottom-40 left-1/4 h-[30rem] w-[30rem] [animation:spectrum-drift_24s_ease-in-out_infinite_reverse]"
+            >
+                <div className="bg-violet/18 blur-[140px]"/>
+            </div>
             <div
                 aria-hidden
                 className="pointer-events-none absolute top-1/3 right-0 h-64 w-64 rounded-full bg-cyan/12 blur-[110px]"
