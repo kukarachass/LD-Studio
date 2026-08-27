@@ -161,7 +161,7 @@ body {
   inset: 0;
   pointer-events: none;
   opacity: 0.035;
-  mix-blend-mode: overlay;
+  /*mix-blend-mode: overlay;*/
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -308,7 +308,18 @@ body {
    невидимим. Тому блок розкриття називається .disclosure.
 ================================================================== */
 
-/* --- Розкриття блоків без перерахунку layout усієї сторінки ----- */
+
+/* --- Розкриття блоків -------------------------------------------
+   Розмір не анімується взагалі — тільки поява вмісту.
+   Це єдиний спосіб отримати стабільні 60 fps на мобільних:
+   opacity і transform не викликають reflow.
+------------------------------------------------------------------ */
+
+/* --- Розкриття блоків -------------------------------------------
+   grid-template-rows: 0fr → 1fr замість height: auto.
+   Прозорість — на внутрішньому шарі, з невеликою затримкою: так вміст
+   проявляється вже коли місце під нього майже розкрилося.
+------------------------------------------------------------------ */
 
 .disclosure {
     display: grid;
@@ -334,6 +345,13 @@ body {
 .disclosure[data-open="true"] .disclosure-inner {
     opacity: 1;
     transition-delay: 100ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .disclosure,
+    .disclosure-inner {
+        transition: none;
+    }
 }
 
 /* --- Поява при прокрутці на CSS замість JS-анімації ------------- */
