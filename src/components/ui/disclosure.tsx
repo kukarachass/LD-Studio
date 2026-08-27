@@ -26,9 +26,10 @@ export function Disclosure({
   className?: string;
 }) {
   return (
-    <div id={id} data-open={open} className={cn("disclosure", className)}>
-      {/* Обгортка обов'язкова: саме її висоту стискає нульовий рядок сітки */}
-      <div>{children}</div>
-    </div>
+      <div id={id} data-open={open} className={cn("disclosure", className)}>
+          <div>
+              <div className="disclosure-inner">{children}</div>
+          </div>
+      </div>
   );
 }

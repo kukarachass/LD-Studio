@@ -115,7 +115,7 @@ export function Services() {
                     </button>
                   </h3>
 
-                  {/*<Disclosure open={isActive} id={`${service.slug}-panel`}>*/}
+                  <Disclosure open={isActive} id={`${service.slug}-panel`}>
                     <div className="pb-6 pl-8 sm:pl-12">
                       <p className="max-w-xl text-[14px] leading-relaxed text-muted sm:text-[15px]">
                         {service.summary}
@@ -146,7 +146,7 @@ export function Services() {
                         </div>
                       )}
                     </div>
-                  {/*</Disclosure>*/}
+                  </Disclosure>
                 </div>
               </Reveal>
             );

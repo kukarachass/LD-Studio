@@ -311,24 +311,29 @@ body {
 /* --- Розкриття блоків без перерахунку layout усієї сторінки ----- */
 
 .disclosure {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  /* Локалізує перерахунок у межах блока замість усього документа */
-  contain: layout;
-  transition:
-    grid-template-rows 360ms var(--ease-out-quint),
-    opacity 220ms linear;
+    display: grid;
+    grid-template-rows: 0fr;
+    contain: layout paint style;
+    transition: grid-template-rows 280ms var(--ease-out-quint);
 }
 
 .disclosure > * {
-  min-height: 0;
-  overflow: hidden;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.disclosure-inner {
+    opacity: 0;
+    transition: opacity 160ms linear;
 }
 
 .disclosure[data-open="true"] {
-  grid-template-rows: 1fr;
-  opacity: 1;
+    grid-template-rows: 1fr;
+}
+
+.disclosure[data-open="true"] .disclosure-inner {
+    opacity: 1;
+    transition-delay: 100ms;
 }
 
 /* --- Поява при прокрутці на CSS замість JS-анімації ------------- */
