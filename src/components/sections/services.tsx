@@ -133,20 +133,20 @@ export function Services() {
                                             </ul>
 
                                             {/* Фото всередині акордеона — тільки на вузьких екранах */}
-                                            {!isDesktop && (
-                                                <div
-                                                    className="relative mt-6 aspect-[16/11] w-full overflow-hidden rounded-sm">
-                                                    <Image
-                                                        src={service.image}
-                                                        alt={service.imageAlt}
-                                                        fill
-                                                        sizes="100vw"
-                                                        className="object-cover"
-                                                    />
-                                                    <div
-                                                        className="absolute inset-0 bg-[linear-gradient(180deg,transparent_60%,rgba(5,3,8,0.8))]"/>
-                                                </div>
-                                            )}
+                                            {/*{!isDesktop && (*/}
+                                            {/*    <div*/}
+                                            {/*        className="relative mt-6 aspect-[16/11] w-full overflow-hidden rounded-sm">*/}
+                                            {/*        <Image*/}
+                                            {/*            src={service.image}*/}
+                                            {/*            alt={service.imageAlt}*/}
+                                            {/*            fill*/}
+                                            {/*            sizes="100vw"*/}
+                                            {/*            className="object-cover"*/}
+                                            {/*        />*/}
+                                            {/*        <div*/}
+                                            {/*            className="absolute inset-0 bg-[linear-gradient(180deg,transparent_60%,rgba(5,3,8,0.8))]"/>*/}
+                                            {/*    </div>*/}
+                                            {/*)}*/}
                                         </div>
                                     </Disclosure>
                                 </div>
