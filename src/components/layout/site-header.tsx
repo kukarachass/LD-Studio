@@ -174,10 +174,16 @@ export function SiteHeader() {
         Оверлей лишається в розмітці й керується прозорістю: так перехід
         робить CSS, без бібліотеки анімацій. inert прибирає закрите меню
         з фокуса й зі скрінрідера.
+
+        data-open читає .overlay-fade у globals.css: поки меню закрите,
+        оверлей отримує visibility: hidden із затримкою на час затухання.
+        Без цього backdrop-blur-2xl на весь екран лишався б у малюванні
+        завжди — на iPhone це помітно гальмує прокрутку всієї сторінки.
       */}
       <div
+        data-open={menuOpen}
         className={cn(
-          "bg-void/97 fixed inset-0 z-40 flex flex-col pt-[var(--header-h)] backdrop-blur-2xl transition-opacity duration-300 lg:hidden",
+          "overlay-fade bg-void/97 fixed inset-0 z-40 flex flex-col pt-[var(--header-h)] backdrop-blur-2xl lg:hidden",
           menuOpen ? "opacity-100" : "pointer-events-none opacity-0",
         )}
         inert={!menuOpen}
