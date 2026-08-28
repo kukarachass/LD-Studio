@@ -67,7 +67,8 @@ export const SITE = {
       {
           id: "tik-tok",
           label: "Tiktok",
-          url: "https://www.tiktok.com/@l.d_studio?_r=1&_t=ZS-99GYsWzbGmA"
+          url: "https://www.tiktok.com/@l.d_studio?_r=1&_t=ZS-99GYsWzbGmA",
+          handle: "@l.d_studio",
       }
   ],
 
