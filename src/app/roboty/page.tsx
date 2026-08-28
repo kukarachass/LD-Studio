@@ -9,14 +9,14 @@ import { SITE } from "@/content/site";
 import { WORKS } from "@/content/works";
 
 export const metadata: Metadata = {
-  title: "Усі роботи студії",
+  title: "Роботи студії",
   description:
     "Галерея робіт L.D_Studio: кастомні фари, Bi-LED та LED лінзи, ДХО, RGB-контури, відновлення й бронювання оптики. Реальні кадри з боксу в Одесі.",
   alternates: { canonical: "/roboty" },
   openGraph: {
     type: "article",
     url: `${SITE.url}/roboty`,
-    title: `Усі роботи студії — ${SITE.name}`,
+    title: `Роботи студії — ${SITE.name}`,
     description:
       "Галерея робіт з автомобільною оптикою: кастом, Bi-LED, ДХО, відновлення, бронювання.",
   },
@@ -70,7 +70,7 @@ export default function WorksPage() {
             className="animate-rise-in font-display mt-6 text-[clamp(2.1rem,9vw,5.5rem)] leading-[0.96] font-black tracking-[-0.018em] uppercase"
             style={{ animationDelay: "0.1s" }}
           >
-            Усі роботи
+             Роботи
             <br />
             <span className="text-spectrum">студії</span>
           </h1>

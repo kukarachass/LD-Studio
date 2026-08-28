@@ -30,7 +30,7 @@ export function Works() {
       <Reveal className="mt-10 flex flex-col items-center gap-4 sm:mt-14">
         <hr className="rule-spectrum w-full max-w-md" />
         <ButtonLink href="/roboty" size="lg" className="w-full sm:w-auto">
-          Переглянути всі роботи
+          Переглянути бiльше
           <span aria-hidden>→</span>
         </ButtonLink>
         {remaining > 0 && (

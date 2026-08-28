@@ -64,6 +64,11 @@ export const SITE = {
       handle: "@l.d_studio",
       url: "https://www.instagram.com/l.d_studio",
     },
+      {
+          id: "tik-tok",
+          label: "Tiktok",
+          url: "https://www.tiktok.com/@l.d_studio?_r=1&_t=ZS-99GYsWzbGmA"
+      }
   ],
 
   /**

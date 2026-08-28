@@ -11,30 +11,38 @@
  */
 
 export type BeforeAfterPair = {
-  id: string;
-  title: string;
-  subtitle: string;
-  before: string;
-  after: string;
-  /** width / height — задає висоту блока без стрибка верстки. */
-  aspect: number;
+    id: string;
+    title: string;
+    subtitle: string;
+    before: string;
+    after: string;
+    /** width / height — задає висоту блока без стрибка верстки. */
+    aspect: number;
 };
 
 export const BEFORE_AFTER: BeforeAfterPair[] = [
-  {
-    id: "audi-a5",
-    title: "Audi A5",
-    subtitle: "Помутніле скло, запотівання → відновлення та бронювання",
-    before: "/before-after/audi-before-1.webp",
-    after: "/before-after/audi-after-1.webp",
-    aspect: 1179 / 1160,
-  },
-  {
-    id: "vw-passat",
-    title: "VW Passat B8",
-    subtitle: "Штатна галогенна оптика → Bi-LED із синім контуром",
-    before: "/before-after/passat-before-1.webp",
-    after: "/before-after/passat-after-1.webp",
-    aspect: 1179 / 1447,
-  },
+    {
+        id: "audi-a5",
+        title: "Audi A5",
+        subtitle: "Помутніле скло, запотівання → відновлення та бронювання",
+        before: "/before-after/audi-before-1.webp",
+        after: "/before-after/audi-after-1.webp",
+        aspect: 1179 / 1160,
+    },
+    {
+        id: "vw-passat",
+        title: "VW Passat B8",
+        subtitle: "Штатна галогенна оптика → Bi-LED із синім контуром",
+        before: "/before-after/passat-before-1.webp",
+        after: "/before-after/passat-after-1.webp",
+        aspect: 1179 / 1447,
+    },
+    {
+        id: "bmw-e60",
+        title: "BMW-e60",
+        subtitle: "",
+        before: "/before-after/bmw-e60-before.webp",
+        after: "/before-after/bmw-e60-after.webp",
+        aspect: 1179 / 1447,
+    },
 ];
