@@ -17,7 +17,7 @@ export const SITE = {
    * Домен продакшену. Замініть на реальний перед деплоєм —
    * від нього залежать canonical, sitemap.xml, robots.txt і OG-теги.
    */
-  url: "https://ld-studio.com.ua",
+  url: "https://l-d.studio",
 
   contacts: {
     /** Формат для tel: — тільки цифри та «+». */
