@@ -16,7 +16,6 @@ export function Works() {
   return (
     <section id="works" className="section-x mx-auto max-w-[110rem] py-20 sm:py-28">
       <SectionHeading
-        index="03"
         eyebrow="Портфоліо"
         title="Роботи студії"
         description={`Реальні кадри з боксу, без стоку й рендерів. Усього в галереї — ${WORKS.length} робіт.`}

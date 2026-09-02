@@ -24,7 +24,6 @@ export function Reviews() {
 
       <div className="section-x relative mx-auto max-w-[110rem]">
         <SectionHeading
-          index="05"
           eyebrow="Відгуки"
           title="Що кажуть клієнти"
           description="Живі відгуки з картки студії. Натисніть на джерело — побачите оригінал."

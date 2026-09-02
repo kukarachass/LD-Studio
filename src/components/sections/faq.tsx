@@ -13,7 +13,6 @@ export function Faq() {
   return (
     <section id="faq" className="section-x mx-auto max-w-[110rem] py-20 sm:py-28">
       <SectionHeading
-        index="06"
         eyebrow="Питання та відповіді"
         title="Що запитують найчастіше"
         description="Якщо вашого питання тут немає — просто зателефонуйте або напишіть в Instagram."

@@ -16,7 +16,6 @@ export function Process() {
 
       <div className="section-x mx-auto max-w-[110rem]">
         <SectionHeading
-          index="04"
           eyebrow="Як проходить робота"
           title={
             <>

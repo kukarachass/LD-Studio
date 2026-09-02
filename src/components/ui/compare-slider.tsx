@@ -208,8 +208,7 @@ export function CompareSlider({
     <div
       ref={containerRef}
       className={cn(
-        "relative w-full cursor-ew-resize touch-pan-y overflow-hidden select-none max-h-[7" +
-          "00px]",
+        "relative w-full cursor-ew-resize touch-pan-y overflow-hidden select-none max-h-[650px]",
         className,
       )}
       style={{ aspectRatio: aspect }}

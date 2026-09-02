@@ -39,7 +39,7 @@ export const BEFORE_AFTER: BeforeAfterPair[] = [
     },
     {
         id: "bmw-e60",
-        title: "BMW-e60",
+        title: "BMW-E60",
         subtitle: "",
         before: "/before-after/bmw-e60-before.webp",
         after: "/before-after/bmw-e60-after.webp",
